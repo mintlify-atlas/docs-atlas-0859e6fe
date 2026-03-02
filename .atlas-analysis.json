@@ -1,0 +1,67 @@
+{
+  "projectType": "general",
+  "projectName": "Discord OTP Bot",
+  "projectDescription": "A Discord bot that automatically retrieves OTP codes from your email and sends them directly to your Discord DMs.",
+  "theme": "almond",
+  "primaryColor": "#5865F2",
+  "lightColor": "#7289DA",
+  "darkColor": "#404EED",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "configuration"
+        ]
+      },
+      {
+        "group": "Setup Guides",
+        "pages": [
+          "setup/discord-setup",
+          "setup/email-setup"
+        ]
+      },
+      {
+        "group": "Usage",
+        "pages": [
+          "usage/commands",
+          "usage/running-the-bot"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/supported-providers",
+          "reference/otp-patterns",
+          "reference/troubleshooting"
+        ]
+      },
+      {
+        "group": "Additional",
+        "pages": [
+          "security",
+          "contributing"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Automated OTP detection from emails",
+    "Multi-provider IMAP support (Gmail, Outlook, Yahoo, etc.)",
+    "Discord slash commands (/otp, /quick_otp, /ping)",
+    "Secure ephemeral DM responses",
+    "Intelligent pattern matching for various OTP formats",
+    "Real-time email monitoring"
+  ],
+  "publicApiSurface": [
+    "OTPBot class",
+    "extract_otp_from_email() method",
+    "search_otp_in_emails() method",
+    "wait_for_otp_email() method",
+    "/otp command - Deep scan (2 minutes)",
+    "/quick_otp command - Quick scan (1 minute)",
+    "/ping command - Bot status check"
+  ]
+}
