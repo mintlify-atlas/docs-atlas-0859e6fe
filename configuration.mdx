@@ -53,9 +53,11 @@ All configuration is managed through a `.env` file in the project root. This fil
 </ParamField>
 
 <ParamField path="IMAP_PORT" type="number" default="993">
-  The IMAP server port. Standard IMAP over SSL/TLS uses port 993.
+  The IMAP server port. The bot uses port 993 (SSL/TLS) by default.
   
-  **Default:** `993` (recommended for all providers)
+  <Note>
+    This variable is defined in `.env.example` but is **not currently used** by the bot. The bot automatically connects via SSL/TLS on port 993. You can still set this variable for future compatibility.
+  </Note>
 </ParamField>
 
 ### Example Configuration
@@ -224,7 +226,7 @@ If any required variables are missing, the bot will:
 | `EMAIL_ADDRESS` | Yes | - | Email address to monitor for OTPs |
 | `EMAIL_PASSWORD` | Yes | - | App-specific password (not your actual password) |
 | `IMAP_SERVER` | Yes | - | IMAP server hostname |
-| `IMAP_PORT` | No | 993 | IMAP server port (SSL/TLS) |
+| `IMAP_PORT` | No | 993 | IMAP server port (not used by current version) |
 
 ## Troubleshooting
 
