@@ -1,0 +1,80 @@
+---
+title: Discord OTP Bot
+description: Automatically retrieve OTP codes from your email and send them directly to Discord DMs
+---
+
+# Discord OTP Bot
+
+A powerful Discord bot that automatically retrieves OTP (One-Time Password) codes from your email and sends them directly to your Discord DMs. Perfect for developers, power users, and anyone who needs quick access to verification codes without switching between apps.
+
+## Overview
+
+Stop switching between your email and other apps to copy verification codes. Discord OTP Bot monitors your email inbox via IMAP and extracts OTP codes using intelligent pattern matching, delivering them securely to your Discord direct messages.
+
+<CardGroup cols={2}>
+  <Card title="Automated OTP Detection" icon="magnifying-glass">
+    Scans emails for verification codes using intelligent pattern matching that works with most services
+  </Card>
+  <Card title="Multi-Provider Support" icon="envelope">
+    Works with Gmail, Outlook, Yahoo, iCloud, AOL, and any IMAP-enabled email service
+  </Card>
+  <Card title="Secure & Private" icon="lock">
+    All OTP responses are ephemeral (only visible to you), and the bot is read-only—never modifies your mail
+  </Card>
+  <Card title="Fast & Efficient" icon="bolt">
+    Real-time monitoring with quick and deep scan options to get your codes instantly
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Slash Commands** - Use `/otp`, `/quick_otp`, and `/ping` for easy access
+- **Real-time Monitoring** - Waits for new OTP emails to arrive and notifies you immediately
+- **Intelligent Pattern Matching** - Supports various OTP formats including:
+  - "147477 is your verification code"
+  - Bolded codes like `**123456**`
+  - "Your code is: 123456"
+  - Any 4-8 digit numeric OTP
+- **Environment-Based Configuration** - Simple `.env` file setup
+- **Privacy-First** - No data logging, ephemeral messages only
+
+## Available Commands
+
+| Command | Description | Scan Time |
+|---------|-------------|----------|
+| `/otp <email>` | Deep scan for existing and new OTPs | 2 minutes |
+| `/quick_otp <email>` | Quick scan for existing OTPs | 1 minute |
+| `/ping` | Check bot responsiveness and latency | Instant |
+
+## How It Works
+
+1. **Connect** - The bot connects to your email inbox using IMAP protocol
+2. **Search** - When you use `/otp` or `/quick_otp`, it searches emails sent to the specified address
+3. **Extract** - Intelligent regex patterns extract OTP codes from email subjects and body text
+4. **Deliver** - OTP codes are sent directly to your Discord DMs as ephemeral messages (only you can see them)
+
+## Quick Links
+
+<CardGroup cols={2}>
+  <Card title="Installation Guide" icon="download" href="/installation">
+    Step-by-step instructions to install and set up the bot
+  </Card>
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Configure environment variables and email settings
+  </Card>
+</CardGroup>
+
+## Security & Privacy
+
+<Note>
+  **Disclaimer:** Use this bot only with email accounts you own. The bot requires access to your email inbox to function.
+</Note>
+
+- Uses secure app passwords (not your actual email password)
+- All OTP responses are ephemeral Discord messages
+- Bot has read-only access and never modifies your emails
+- No sensitive data is saved or logged
+
+## Support
+
+If this project helps you, please star the [GitHub repository](https://github.com/2577mamneet/discord-otp-bot)!

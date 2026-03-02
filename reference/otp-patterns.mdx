@@ -1,0 +1,227 @@
+---
+title: OTP Pattern Matching
+description: Understand how the bot detects and extracts OTP codes from emails
+icon: magnifying-glass
+---
+
+The Discord OTP Bot uses intelligent pattern matching to detect OTP codes across various email formats and services. This page explains the regex patterns used and how the extraction works.
+
+## Supported OTP Formats
+
+The bot can detect OTP codes in the following formats:
+
+<CardGroup cols={2}>
+  <Card title="4-8 Digit Codes" icon="hashtag">
+    Standard numeric verification codes between 4 and 8 digits
+  </Card>
+  <Card title="Service-Specific" icon="at">
+    Formatted codes like "147477 is your verification code"
+  </Card>
+  <Card title="Bolded Codes" icon="bold">
+    Markdown-style codes like `**123456**`
+  </Card>
+  <Card title="Labeled Codes" icon="tag">
+    Codes with labels like "Your code is: 123456"
+  </Card>
+</CardGroup>
+
+## Pattern Matching Logic
+
+The bot searches both the email subject and body using multiple regex patterns in priority order. The first matching pattern returns the OTP code.
+
+### Pattern Priority
+
+Patterns are checked in the following order (from `otp_bot.py:40-60`):
+
+```python
+patterns = [
+    # Instacart style: "147477 is your instacart verification code"
+    r'(\d{6})\s+is\s+your\s+[\w\s]+\s+verification\s+code',
+    
+    # Bolded codes like **147477**
+    r'\*\*(\d{4,8})\*\*',
+    
+    # Standalone 4-8 digit codes
+    r'\s(\d{4,8})\s',
+    
+    # Common OTP phrases
+    r'code:?\s*[:\-]?\s*(\d{4,8})',
+    r'verification\s+code:?\s*[:\-]?\s*(\d{4,8})',
+    r'OTP:?\s*[:\-]?\s*(\d{4,8})',
+    r'one.time.*?code:?\s*[:\-]?\s*(\d{4,8})',
+    r'your.*?code.*?is:?\s*[:\-]?\s*(\d{4,8})',
+    
+    # Fallback: any 4-8 digit number
+    r'\b\d{4,8}\b'
+]
+```
+
+<Note>
+Patterns use case-insensitive matching (`re.IGNORECASE`) to handle variations in capitalization.
+</Note>
+
+## Pattern Examples
+
+Here are real-world examples of OTP emails the bot can parse:
+
+### Service-Specific Format
+
+```text
+Email: "147477 is your instacart verification code"
+Pattern: (\d{6})\s+is\s+your\s+[\w\s]+\s+verification\s+code
+Extracted: 147477
+```
+
+### Bolded Code
+
+```text
+Email: "Your verification code is **468450**"
+Pattern: \*\*(\d{4,8})\*\*
+Extracted: 468450
+```
+
+### Labeled Code
+
+```text
+Email: "Your code is: 123456"
+Pattern: code:?\s*[:\-]?\s*(\d{4,8})
+Extracted: 123456
+```
+
+### Verification Code
+
+```text
+Email: "Verification code: 987654"
+Pattern: verification\s+code:?\s*[:\-]?\s*(\d{4,8})
+Extracted: 987654
+```
+
+### OTP Label
+
+```text
+Email: "Your OTP - 555123"
+Pattern: OTP:?\s*[:\-]?\s*(\d{4,8})
+Extracted: 555123
+```
+
+### Standalone Code
+
+```text
+Email: "Please use 789012 to verify your account"
+Pattern: \s(\d{4,8})\s
+Extracted: 789012
+```
+
+## How Pattern Matching Works
+
+The extraction process follows these steps:
+
+<Steps>
+  <Step title="Combine Email Parts">
+    The bot concatenates the email subject and body text into a single search string:
+    ```python
+    search_text = f"{email_subject} {email_text}"
+    ```
+  </Step>
+  
+  <Step title="Apply Patterns Sequentially">
+    Each regex pattern is tested against the search text in priority order until a match is found.
+  </Step>
+  
+  <Step title="Return First Match">
+    The first pattern that successfully matches returns the extracted OTP code:
+    ```python
+    for pattern in patterns:
+        matches = re.findall(pattern, search_text, re.IGNORECASE)
+        if matches:
+            print(f"🔑 OTP found with pattern: {matches[0]}")
+            return matches[0]
+    ```
+  </Step>
+  
+  <Step title="Fallback to Generic">
+    If no specific pattern matches, the fallback pattern (`\b\d{4,8}\b`) catches any 4-8 digit number.
+  </Step>
+</Steps>
+
+## Regex Pattern Breakdown
+
+Let's break down the key patterns:
+
+### Verification Code Pattern
+
+```regex
+verification\s+code:?\s*[:\-]?\s*(\d{4,8})
+```
+
+- `verification` - Matches the word "verification"
+- `\s+` - Matches one or more whitespace characters
+- `code` - Matches the word "code"
+- `:?` - Optionally matches a colon
+- `\s*` - Matches zero or more whitespace
+- `[:\-]?` - Optionally matches `:` or `-`
+- `(\d{4,8})` - **Captures 4-8 digits** (the OTP)
+
+### Bolded Code Pattern
+
+```regex
+\*\*(\d{4,8})\*\*
+```
+
+- `\*\*` - Matches two asterisks (escaped)
+- `(\d{4,8})` - **Captures 4-8 digits** (the OTP)
+- `\*\*` - Matches two closing asterisks
+
+### Flexible Code Pattern
+
+```regex
+code:?\s*[:\-]?\s*(\d{4,8})
+```
+
+- `code` - Matches the word "code"
+- `:?` - Optionally matches a colon
+- `\s*` - Matches zero or more whitespace
+- `[:\-]?` - Optionally matches `:` or `-`
+- `(\d{4,8})` - **Captures 4-8 digits** (the OTP)
+
+<Info>
+All capture groups use `(\d{4,8})` to match OTP codes between 4 and 8 digits, which covers the vast majority of verification codes.
+</Info>
+
+## Debug Output
+
+When the bot finds an OTP, it logs which pattern was successful:
+
+```bash
+🔑 OTP found with pattern: 468450
+```
+
+This helps you understand which pattern matched and verify the correct code was extracted.
+
+## Limitations
+
+<Warning>
+The bot may struggle with:
+- **Alphanumeric codes** (e.g., `A1B2C3`) - only numeric codes are supported
+- **Codes outside 4-8 digits** - codes like `123` or `123456789` won't match
+- **Image-based OTPs** - codes embedded in images cannot be extracted
+</Warning>
+
+## Adding Custom Patterns
+
+If you need to support a specific OTP format not covered by the default patterns, you can modify the `patterns` list in `otp_bot.py:41-60`:
+
+```python
+patterns = [
+    # Add your custom pattern at the top for priority
+    r'your_custom_pattern_here',
+    
+    # Existing patterns...
+    r'(\d{6})\s+is\s+your\s+[\w\s]+\s+verification\s+code',
+    # ...
+]
+```
+
+<Tip>
+Place more specific patterns at the top of the list to ensure they're checked before generic fallback patterns.
+</Tip>

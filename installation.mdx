@@ -1,0 +1,188 @@
+---
+title: Installation
+description: Step-by-step guide to install and run Discord OTP Bot
+---
+
+# Installation
+
+Get Discord OTP Bot up and running in minutes with this comprehensive installation guide.
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+
+- **Python 3.8 or higher** installed on your system
+- A **Discord server** where you have permission to add bots
+- An **email account with IMAP enabled** (Gmail, Outlook, Yahoo, etc.)
+- **Git** for cloning the repository
+
+## Installation Steps
+
+<Steps>
+  <Step title="Clone the Repository">
+    Clone the Discord OTP Bot repository to your local machine:
+
+    ```bash
+    git clone https://github.com/2577mamneet/discord-otp-bot.git
+    cd discord-otp-bot
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    Install the required Python packages using pip:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+    This will install:
+    - `discord.py==2.3.2` - Discord API wrapper for Python
+    - `imap-tools==1.4.0` - IMAP email client library
+    - `python-dotenv==1.0.0` - Environment variable management
+  </Step>
+
+  <Step title="Create Environment File">
+    Copy the example environment file to create your configuration:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    <Note>
+      The `.env` file will contain sensitive information like your bot token and email credentials. Never commit this file to version control.
+    </Note>
+  </Step>
+
+  <Step title="Configure Discord Bot">
+    ### Create a Discord Application
+
+    1. Open the [Discord Developer Portal](https://discord.com/developers/applications)
+    2. Click **New Application**
+    3. Name your application (e.g., "OTP Bot")
+    4. Click **Create**
+
+    ### Add Bot User
+
+    1. Go to the **Bot** tab in the left sidebar
+    2. Click **Add Bot** and confirm
+    3. Under **Privileged Gateway Intents**, enable:
+       - **MESSAGE CONTENT INTENT** (required for the bot to function)
+    4. Click **Reset Token** and copy your bot token
+    5. Save the token for the next step
+
+    ### Invite Bot to Your Server
+
+    1. Go to **OAuth2 → URL Generator** in the left sidebar
+    2. Under **Scopes**, select:
+       - `bot`
+       - `applications.commands`
+    3. Under **Bot Permissions**, select:
+       - View Channels
+       - Send Messages
+       - Read Message History
+       - Use Slash Commands
+    4. Copy the generated URL and open it in your browser
+    5. Select your server and authorize the bot
+  </Step>
+
+  <Step title="Configure Email Access">
+    ### For Gmail Users
+
+    1. Enable **2-Step Verification** on your Google Account
+    2. Go to [Google App Passwords](https://myaccount.google.com/apppasswords)
+    3. Select **Mail** as the app type
+    4. Generate the app password
+    5. Copy the 16-character password (without spaces)
+
+    <Warning>
+      Use an **App Password**, not your regular Gmail password. App passwords are more secure and can be revoked independently.
+    </Warning>
+
+    ### For Other Email Providers
+
+    Refer to the [Configuration guide](/configuration) for IMAP settings for Outlook, Yahoo, iCloud, and other providers.
+  </Step>
+
+  <Step title="Update Environment Variables">
+    Open the `.env` file and fill in your configuration:
+
+    ```env
+    DISCORD_BOT_TOKEN=your_discord_bot_token_here
+    EMAIL_ADDRESS=your_email@gmail.com
+    EMAIL_PASSWORD=your_16_character_app_password
+    IMAP_SERVER=imap.gmail.com
+    IMAP_PORT=993
+    ```
+
+    Replace the placeholder values with your actual credentials.
+  </Step>
+
+  <Step title="Run the Bot">
+    Start the bot with:
+
+    ```bash
+    python otp_bot.py
+    ```
+
+    You should see output like this:
+
+    ```
+    🚀 Starting OTP Bot...
+    ✅ Logged in as OTP Bot (ID: 1234567890)
+    🔍 Loading slash commands...
+    ✅ Slash commands synced!
+    🎯 Bot is ready! Use /otp or /quick_otp to get started.
+    ```
+
+    <Note>
+      Slash commands may take 1-2 hours to appear globally across Discord. If you don't see them immediately, wait a bit or try reinviting the bot.
+    </Note>
+  </Step>
+</Steps>
+
+## Verify Installation
+
+To verify the bot is working correctly:
+
+1. Open Discord and go to any channel where the bot has access
+2. Type `/ping` and press Enter
+3. You should receive an ephemeral message: "✅ Bot is online and responsive!"
+
+## Troubleshooting
+
+### Missing Environment Variables
+
+If you see this error:
+```
+❌ Missing environment variables: DISCORD_BOT_TOKEN, EMAIL_ADDRESS
+💡 Please check your .env file and make sure all variables are set.
+```
+
+Make sure all required variables in `.env` are filled in:
+- `DISCORD_BOT_TOKEN`
+- `EMAIL_ADDRESS`
+- `EMAIL_PASSWORD`
+- `IMAP_SERVER`
+
+### Bot Doesn't Respond
+
+- Wait 1-2 hours for global slash command sync
+- Reinvite the bot with correct permissions
+- Ensure **MESSAGE CONTENT INTENT** is enabled in the Discord Developer Portal
+
+### IMAP Login Issues
+
+- Verify IMAP is enabled in your email settings
+- Regenerate your app password
+- Check that the IMAP server address is correct
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Learn about all configuration options and email provider settings
+  </Card>
+  <Card title="Usage Guide" icon="book" href="/usage/commands">
+    Discover how to use the bot's commands effectively
+  </Card>
+</CardGroup>

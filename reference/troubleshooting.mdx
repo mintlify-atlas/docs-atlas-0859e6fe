@@ -1,0 +1,299 @@
+---
+title: Troubleshooting
+description: Common issues and solutions for Discord OTP Bot
+icon: wrench
+---
+
+This guide covers common issues you might encounter when using the Discord OTP Bot and how to resolve them.
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Bot doesn't reply to commands">
+    ### Problem
+    You type a slash command but the bot doesn't respond at all.
+    
+    ### Solutions
+    
+    **Wait for command sync**
+    - Discord slash commands can take 1-2 hours to sync globally after first setup
+    - Check the bot logs for `✅ Slash commands synced!` message
+    
+    **Verify bot permissions**
+    - Ensure the bot has the following permissions:
+      - View Channels
+      - Send Messages
+      - Read Message History
+      - Use Slash Commands
+    - Re-invite the bot with the correct OAuth2 URL if needed
+    
+    **Check bot status**
+    - Use `/ping` command to verify the bot is online
+    - Check your terminal/console for bot logs
+    - Look for `🎯 Bot is ready!` message in logs
+    
+    **Restart the bot**
+    ```bash
+    # Stop the bot (Ctrl+C)
+    # Then restart
+    python otp_bot.py
+    ```
+  </Accordion>
+  
+  <Accordion title="Interaction failed error">
+    ### Problem
+    Discord shows "This interaction failed" when you use a command.
+    
+    ### Solutions
+    
+    **Verify environment variables**
+    - Check your `.env` file contains all required variables:
+    ```env
+    DISCORD_BOT_TOKEN=your_discord_bot_token_here
+    EMAIL_ADDRESS=your_email@gmail.com
+    EMAIL_PASSWORD=your_app_password_here
+    IMAP_SERVER=imap.gmail.com
+    IMAP_PORT=993
+    ```
+    
+    **Enable Message Content Intent**
+    1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+    2. Select your application
+    3. Navigate to **Bot** tab
+    4. Enable **MESSAGE CONTENT INTENT**
+    5. Save changes and restart the bot
+    
+    **Check bot logs**
+    - Look for error messages in your terminal
+    - Common errors include:
+      ```bash
+      ❌ Missing environment variables: DISCORD_BOT_TOKEN
+      ❌ Error searching emails: [error details]
+      ```
+    
+    **Verify bot token**
+    - Ensure your `DISCORD_BOT_TOKEN` is valid and not expired
+    - Regenerate the token if necessary from the Developer Portal
+  </Accordion>
+  
+  <Accordion title="No OTP found in emails">
+    ### Problem
+    The bot responds but can't find any OTP code in your emails.
+    
+    ### Solutions
+    
+    **Confirm email delivery**
+    - Check that the verification email actually arrived in your inbox
+    - Look in Spam/Junk folders
+    - Verify the email address you provided is correct
+    
+    **Try quick_otp command**
+    - Use `/quick_otp` for a faster 1-minute search
+    - Sometimes a fresh search finds recently arrived emails
+    
+    **Check email forwarding**
+    - If using email aliases or forwarding, ensure emails reach your main inbox
+    - The bot only searches the inbox configured in `.env`
+    
+    **Verify OTP format**
+    - The bot looks for 4-8 digit numeric codes
+    - Some services use alphanumeric codes which aren't supported
+    - Check if the OTP matches supported patterns (see [OTP Patterns](/reference/otp-patterns))
+    
+    **Wait and retry**
+    - Email delivery can be delayed
+    - Try the command again after a few seconds
+    - Use `/otp` for a longer 2-minute search window
+  </Accordion>
+  
+  <Accordion title="IMAP login issues">
+    ### Problem
+    The bot can't connect to your email server or login fails.
+    
+    ### Solutions
+    
+    **Enable IMAP access**
+    - Gmail: [Enable IMAP](https://support.google.com/mail/answer/7126229)
+    - Outlook: [Enable IMAP](https://support.microsoft.com/en-us/office/pop-imap-and-smtp-settings-8361e398-8af4-4e97-b147-6c6c4ac95353)
+    - Yahoo: [Enable IMAP](https://help.yahoo.com/kb/SLN4075.html)
+    
+    **Regenerate app password**
+    - Never use your regular email password
+    - Generate a new app-specific password:
+      1. Enable 2-Step Verification (Gmail/Google)
+      2. Go to App Passwords settings
+      3. Generate new password for "Mail"
+      4. Update `.env` with new password
+    
+    **Verify IMAP settings**
+    - Check `IMAP_SERVER` and `IMAP_PORT` in `.env`
+    - Refer to [Supported Providers](/reference/supported-providers) for correct settings
+    - Common settings:
+      - Gmail: `imap.gmail.com:993`
+      - Outlook: `imap-mail.outlook.com:993`
+    
+    **Test credentials manually**
+    - Try logging into your email via webmail to verify credentials work
+    - Ensure your account isn't locked or suspended
+    
+    **Check firewall/network**
+    - Ensure port 993 isn't blocked by your firewall
+    - Try disabling VPN if using one
+    - Check if your network allows IMAP connections
+  </Accordion>
+  
+  <Accordion title="Bot finds wrong OTP code">
+    ### Problem
+    The bot returns an incorrect or old OTP code.
+    
+    ### Solutions
+    
+    **Use specific email address**
+    - Provide the exact email where the OTP was sent
+    - Example: `/otp verify@example.com`
+    
+    **Check email timing**
+    - The bot searches emails from the last 2 minutes
+    - Old emails may contain expired codes
+    
+    **Request new OTP**
+    - Get a fresh verification code from the service
+    - Use `/quick_otp` immediately after requesting the code
+    
+    **Review pattern matching**
+    - The bot uses pattern matching which may occasionally match non-OTP numbers
+    - Check the [OTP Patterns](/reference/otp-patterns) documentation
+    - Look at debug logs to see which pattern matched
+  </Accordion>
+  
+  <Accordion title="Bot is slow or times out">
+    ### Problem
+    Commands take too long or the bot times out before finding OTP.
+    
+    ### Solutions
+    
+    **Use quick_otp for faster results**
+    ```
+    /quick_otp your@email.com
+    ```
+    - Searches for only 1 minute instead of 2
+    - Checks fewer emails for faster response
+    
+    **Optimize email inbox**
+    - Large inboxes can slow down IMAP searches
+    - Archive old emails to improve performance
+    - Use email filters to organize incoming mail
+    
+    **Check IMAP server status**
+    - Verify your email provider's IMAP service is operational
+    - Some providers throttle IMAP connections
+    
+    **Improve network connection**
+    - Ensure stable internet connection
+    - Reduce network latency if possible
+  </Accordion>
+</AccordionGroup>
+
+## Debug Logs
+
+The bot provides detailed console logs to help diagnose issues. Here's what to look for:
+
+### Successful Startup
+
+```bash
+🚀 Starting OTP Bot...
+✅ Logged in as OTP Bot (ID: 1234567890)
+🔍 Loading slash commands...
+✅ Slash commands synced!
+🎯 Bot is ready! Use /otp or /quick_otp to get started.
+```
+
+### Successful OTP Search
+
+```bash
+📧 Searching emails for: user@example.com
+🔑 OTP found with pattern: 468450
+✅ OTP found: 468450
+```
+
+### Missing Configuration
+
+```bash
+❌ Missing environment variables: DISCORD_BOT_TOKEN, EMAIL_PASSWORD
+💡 Please check your .env file and make sure all variables are set.
+```
+
+### Email Search Error
+
+```bash
+🔍 Searching emails for: user@example.com
+❌ Error searching emails: [AUTHENTICATIONFAILED] Invalid credentials
+```
+
+### Waiting for New Email
+
+```bash
+⏳ Waiting for new OTP email to: user@example.com
+✅ New OTP received: 123456
+```
+
+<Tip>
+Enable debug mode by checking your terminal/console output. All important events are logged with emoji indicators for easy scanning.
+</Tip>
+
+## Environment Variable Checklist
+
+Ensure all required variables are set in your `.env` file:
+
+<Tabs>
+  <Tab title="Required Variables">
+    ```env
+    DISCORD_BOT_TOKEN=your_discord_bot_token_here
+    EMAIL_ADDRESS=your_email@gmail.com
+    EMAIL_PASSWORD=your_app_password_here
+    IMAP_SERVER=imap.gmail.com
+    IMAP_PORT=993
+    ```
+  </Tab>
+  <Tab title="Validation">
+    The bot automatically validates required variables on startup:
+    ```python
+    required_vars = ['DISCORD_BOT_TOKEN', 'EMAIL_ADDRESS', 'EMAIL_PASSWORD', 'IMAP_SERVER']
+    ```
+    Missing variables will cause the bot to exit with an error message.
+  </Tab>
+</Tabs>
+
+## Still Having Issues?
+
+If you're still experiencing problems after trying these solutions:
+
+<CardGroup cols={2}>
+  <Card title="Check GitHub Issues" icon="github" href="https://github.com/2577mamneet/discord-otp-bot/issues">
+    Search existing issues or create a new one
+  </Card>
+  <Card title="Review Documentation" icon="book">
+    Double-check the setup instructions and configuration guides
+  </Card>
+  <Card title="Verify Permissions" icon="shield">
+    Ensure both Discord bot and email account permissions are correct
+  </Card>
+  <Card title="Test Components" icon="vial">
+    Test Discord connection and email IMAP separately to isolate the issue
+  </Card>
+</CardGroup>
+
+## Error Message Reference
+
+| Error Message | Cause | Solution |
+|---------------|-------|----------|
+| `Missing environment variables` | `.env` file incomplete | Add all required variables to `.env` |
+| `Invalid credentials` | Wrong email password | Regenerate app password |
+| `IMAP login failed` | IMAP not enabled | Enable IMAP in email settings |
+| `No OTP code found` | Email not received or wrong format | Verify email delivery and format |
+| `Please provide a valid email address` | Invalid email format | Use proper email format (user@domain.com) |
+| `This interaction failed` | Bot misconfiguration | Check token and intents |
+
+<Warning>
+**Security Reminder**: Never share your `.env` file, Discord bot token, or email app passwords with anyone. These credentials provide full access to your bot and email account.
+</Warning>

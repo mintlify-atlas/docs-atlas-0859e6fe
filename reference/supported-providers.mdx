@@ -1,0 +1,83 @@
+---
+title: Supported Email Providers
+description: Complete reference for email providers compatible with Discord OTP Bot
+icon: envelope
+---
+
+The Discord OTP Bot supports any email provider that offers IMAP access. Below are the most commonly used providers with their pre-configured settings.
+
+## Supported Providers
+
+The following table lists the major email providers that work with the bot:
+
+| Provider | IMAP Server | Port | Setup Link |
+|----------|-------------|------|------------|
+| **Gmail** | `imap.gmail.com` | 993 | [Enable IMAP](https://support.google.com/mail/answer/7126229) |
+| **Outlook** | `imap-mail.outlook.com` | 993 | [Enable IMAP](https://support.microsoft.com/en-us/office/pop-imap-and-smtp-settings-8361e398-8af4-4e97-b147-6c6c4ac95353) |
+| **Yahoo** | `imap.mail.yahoo.com` | 993 | [Enable IMAP](https://help.yahoo.com/kb/SLN4075.html) |
+| **iCloud** | `imap.mail.me.com` | 993 | [Enable IMAP](https://support.apple.com/en-us/HT202304) |
+| **AOL** | `imap.aol.com` | 993 | [Enable IMAP](https://help.aol.com/articles/imap-settings-for-aol-mail) |
+
+## Configuration
+
+To configure your email provider, update your `.env` file with the appropriate settings:
+
+```env
+EMAIL_ADDRESS=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password_here
+IMAP_SERVER=imap.gmail.com
+IMAP_PORT=993
+```
+
+<Note>
+All providers use port **993** for secure IMAP connections (SSL/TLS).
+</Note>
+
+## Gmail Setup Example
+
+Gmail requires app-specific passwords for IMAP access:
+
+1. **Enable 2-Step Verification** on your Google account
+2. Go to [App Passwords](https://myaccount.google.com/apppasswords)
+3. Select "Mail" as the app type
+4. Generate a new password
+5. Copy the generated password to your `.env` file
+
+<Warning>
+Never use your regular email password. Always use app-specific passwords for security.
+</Warning>
+
+## Other IMAP Providers
+
+The bot works with any email provider that supports IMAP. To use a custom provider:
+
+1. Check your email provider's documentation for IMAP settings
+2. Update `IMAP_SERVER` with the correct server address
+3. Update `IMAP_PORT` (usually 993 for SSL)
+4. Ensure IMAP access is enabled in your email account settings
+
+## Security Requirements
+
+<AccordionGroup>
+  <Accordion title="App Passwords">
+    Most modern email providers require app-specific passwords instead of your regular account password. This adds an extra layer of security.
+  </Accordion>
+  
+  <Accordion title="IMAP Access">
+    IMAP must be explicitly enabled in your email account settings. Some providers disable it by default for security reasons.
+  </Accordion>
+  
+  <Accordion title="Two-Factor Authentication">
+    Providers like Gmail require 2FA to be enabled before you can generate app passwords.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting Provider Issues
+
+If you're having trouble connecting to your email provider:
+
+- Verify IMAP is enabled in your email settings
+- Regenerate your app password
+- Check that the IMAP server address and port are correct
+- Ensure your firewall allows connections on port 993
+- Try logging in via a web browser to verify credentials

@@ -1,0 +1,129 @@
+---
+title: Discord Bot Setup
+description: Create and configure your Discord bot application for OTP Bot
+icon: 'discord'
+---
+
+This guide walks you through creating a Discord application, configuring the bot user, and inviting it to your server.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+- A Discord account
+- Administrator permissions on the Discord server where you want to add the bot
+- Access to the [Discord Developer Portal](https://discord.com/developers/applications)
+
+## Setup Process
+
+<Steps>
+  <Step title="Create a Discord Application">
+    1. Open the [Discord Developer Portal](https://discord.com/developers/applications)
+    2. Click the **New Application** button in the top right
+    3. Enter a name for your application (e.g., "OTP Bot")
+    4. Accept the Terms of Service and click **Create**
+    
+    Your application has been created and you'll be taken to the General Information page.
+  </Step>
+
+  <Step title="Add a Bot User">
+    1. In the left sidebar, navigate to the **Bot** tab
+    2. Click **Add Bot**
+    3. Confirm by clicking **Yes, do it!**
+    
+    Your bot user has been created. You'll see the bot's username and icon on this page.
+  </Step>
+
+  <Step title="Enable Message Content Intent">
+    <Warning>
+      This step is critical for the bot to function properly. Without the Message Content Intent enabled, the bot cannot process commands.
+    </Warning>
+
+    On the Bot settings page:
+    1. Scroll down to **Privileged Gateway Intents**
+    2. Enable the **MESSAGE CONTENT INTENT** toggle
+    3. Click **Save Changes** at the bottom of the page
+    
+    This intent allows the bot to read message content, which is required for processing slash commands and interactions.
+  </Step>
+
+  <Step title="Copy Your Bot Token">
+    <Warning>
+      Your bot token is like a password. Never share it publicly or commit it to version control. Anyone with your token can control your bot.
+    </Warning>
+
+    1. On the Bot settings page, find the **TOKEN** section
+    2. Click **Reset Token** (or **Copy** if this is your first time)
+    3. Copy the token and save it securely - you'll need it for your `.env` file
+    
+    Store this token in your `.env` file as:
+    ```env
+    DISCORD_BOT_TOKEN=your_token_here
+    ```
+  </Step>
+
+  <Step title="Configure Bot Permissions">
+    Navigate to the **OAuth2 → URL Generator** page in the left sidebar.
+    
+    **Select Scopes:**
+    - `bot` - Allows the bot to join servers
+    - `applications.commands` - Enables slash commands
+    
+    **Select Bot Permissions:**
+    - `View Channels` - Required to see channels in the server
+    - `Send Messages` - Required to send OTP codes to users
+    - `Read Message History` - Allows the bot to read previous messages
+    - `Use Slash Commands` - Enables the `/otp`, `/quick_otp`, and `/ping` commands
+    
+    These permissions ensure the bot has exactly what it needs to function without excessive privileges.
+  </Step>
+
+  <Step title="Invite Bot to Your Server">
+    1. After selecting scopes and permissions, scroll to the bottom of the OAuth2 URL Generator page
+    2. Copy the **Generated URL**
+    3. Paste the URL into a new browser tab
+    4. Select the server where you want to add the bot from the dropdown
+    5. Click **Continue**
+    6. Review the permissions and click **Authorize**
+    7. Complete the captcha verification
+    
+    Your bot should now appear in your server's member list as offline (it will come online when you run the bot).
+  </Step>
+</Steps>
+
+## Verification
+
+To verify your Discord bot is set up correctly:
+
+<Check>
+  - Bot appears in your server's member list
+  - MESSAGE CONTENT INTENT is enabled in the Developer Portal
+  - Bot token is saved in your `.env` file
+  - All required permissions are granted
+</Check>
+
+## Next Steps
+
+Now that your Discord bot is configured, proceed to [Email Setup](/setup/email-setup) to configure email access for OTP retrieval.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Bot doesn't respond to commands">
+    - Wait 1-2 hours for Discord to sync global slash commands
+    - Verify MESSAGE CONTENT INTENT is enabled
+    - Check that the bot has the correct permissions in your server
+    - Try reinviting the bot with the generated OAuth2 URL
+  </Accordion>
+
+  <Accordion title="Interaction Failed error">
+    - Verify your `.env` file contains the correct `DISCORD_BOT_TOKEN`
+    - Ensure MESSAGE CONTENT INTENT is enabled in the Developer Portal
+    - Check that the bot has permission to send messages in the channel
+  </Accordion>
+
+  <Accordion title="Bot appears offline">
+    - Make sure you've started the bot with `python otp_bot.py`
+    - Verify your bot token is correct
+    - Check console logs for connection errors
+  </Accordion>
+</AccordionGroup>

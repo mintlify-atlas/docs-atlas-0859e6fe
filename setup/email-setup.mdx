@@ -1,0 +1,357 @@
+---
+title: Email Provider Setup
+description: Configure IMAP access and app passwords for OTP email retrieval
+icon: 'envelope'
+---
+
+The OTP Bot retrieves verification codes from your email using IMAP (Internet Message Access Protocol). This guide covers how to set up email access for different providers.
+
+## Security Overview
+
+<Warning>
+  The bot requires access to your email inbox to retrieve OTP codes. Use app-specific passwords (not your main email password) whenever possible for enhanced security.
+</Warning>
+
+<Info>
+  The bot operates in **read-only mode** and never modifies, deletes, or sends emails. All OTP codes are sent as ephemeral messages visible only to you.
+</Info>
+
+## Supported Email Providers
+
+<Tabs>
+  <Tab title="Gmail">
+    ### Gmail Setup
+
+    Gmail requires app-specific passwords when using IMAP with third-party applications.
+
+    <Steps>
+      <Step title="Enable 2-Step Verification">
+        1. Go to your [Google Account Security](https://myaccount.google.com/security) page
+        2. Under "Signing in to Google," select **2-Step Verification**
+        3. Follow the prompts to set up 2-Step Verification
+        4. Complete the setup process
+        
+        <Note>
+          App passwords are only available after 2-Step Verification is enabled.
+        </Note>
+      </Step>
+
+      <Step title="Generate App Password">
+        1. Return to [Google Account Security](https://myaccount.google.com/security)
+        2. Under "Signing in to Google," select **App passwords**
+        3. You may need to sign in again
+        4. In the "Select app" dropdown, choose **Mail**
+        5. In the "Select device" dropdown, choose **Other (Custom name)**
+        6. Enter a name like "Discord OTP Bot"
+        7. Click **Generate**
+        
+        Google will display a 16-character app password. Copy this immediately.
+      </Step>
+
+      <Step title="Configure Environment Variables">
+        Add the following to your `.env` file:
+        
+        ```env
+        EMAIL_ADDRESS=your_email@gmail.com
+        EMAIL_PASSWORD=your_16_char_app_password_here
+        IMAP_SERVER=imap.gmail.com
+        IMAP_PORT=993
+        ```
+        
+        <Warning>
+          The app password should be entered **without spaces**. If Google shows it as `abcd efgh ijkl mnop`, enter it as `abcdefghijklmnop`.
+        </Warning>
+      </Step>
+    </Steps>
+
+    ### Gmail IMAP Settings
+
+    | Setting | Value |
+    |---------|-------|
+    | IMAP Server | `imap.gmail.com` |
+    | Port | `993` |
+    | Encryption | SSL/TLS |
+  </Tab>
+
+  <Tab title="Outlook / Hotmail">
+    ### Outlook/Hotmail Setup
+
+    Microsoft Outlook and Hotmail support IMAP access with app passwords.
+
+    <Steps>
+      <Step title="Enable Two-Factor Authentication">
+        1. Go to [Microsoft Account Security](https://account.microsoft.com/security)
+        2. Select **Advanced security options**
+        3. Under "Two-step verification," select **Turn on**
+        4. Follow the setup wizard to enable 2FA
+      </Step>
+
+      <Step title="Create App Password">
+        1. Return to [Advanced security options](https://account.microsoft.com/security)
+        2. Under "App passwords," select **Create a new app password**
+        3. Copy the generated password (it will only be shown once)
+      </Step>
+
+      <Step title="Configure Environment Variables">
+        Add to your `.env` file:
+        
+        ```env
+        EMAIL_ADDRESS=your_email@outlook.com
+        EMAIL_PASSWORD=your_app_password_here
+        IMAP_SERVER=imap-mail.outlook.com
+        IMAP_PORT=993
+        ```
+      </Step>
+    </Steps>
+
+    ### Outlook IMAP Settings
+
+    | Setting | Value |
+    |---------|-------|
+    | IMAP Server | `imap-mail.outlook.com` |
+    | Port | `993` |
+    | Encryption | SSL/TLS |
+  </Tab>
+
+  <Tab title="Yahoo Mail">
+    ### Yahoo Mail Setup
+
+    Yahoo Mail requires app passwords for third-party IMAP access.
+
+    <Steps>
+      <Step title="Enable Two-Step Verification">
+        1. Go to [Yahoo Account Security](https://login.yahoo.com/account/security)
+        2. Select **Two-step verification**
+        3. Toggle it **On** and follow the setup process
+      </Step>
+
+      <Step title="Generate App Password">
+        1. Go to [Yahoo Account Security](https://login.yahoo.com/account/security)
+        2. Select **Generate app password**
+        3. Enter "Discord OTP Bot" as the app name
+        4. Click **Generate**
+        5. Copy the generated password
+      </Step>
+
+      <Step title="Configure Environment Variables">
+        Add to your `.env` file:
+        
+        ```env
+        EMAIL_ADDRESS=your_email@yahoo.com
+        EMAIL_PASSWORD=your_app_password_here
+        IMAP_SERVER=imap.mail.yahoo.com
+        IMAP_PORT=993
+        ```
+      </Step>
+    </Steps>
+
+    ### Yahoo IMAP Settings
+
+    | Setting | Value |
+    |---------|-------|
+    | IMAP Server | `imap.mail.yahoo.com` |
+    | Port | `993` |
+    | Encryption | SSL/TLS |
+  </Tab>
+
+  <Tab title="iCloud">
+    ### iCloud Mail Setup
+
+    Apple's iCloud Mail requires app-specific passwords for IMAP access.
+
+    <Steps>
+      <Step title="Enable Two-Factor Authentication">
+        1. Go to [appleid.apple.com](https://appleid.apple.com)
+        2. Sign in with your Apple ID
+        3. Navigate to **Security**
+        4. Enable **Two-Factor Authentication** if not already enabled
+      </Step>
+
+      <Step title="Generate App-Specific Password">
+        1. In the **Security** section, select **App-Specific Passwords**
+        2. Click the **+** button or **Generate an app-specific password**
+        3. Enter a label like "Discord OTP Bot"
+        4. Copy the generated password (format: `xxxx-xxxx-xxxx-xxxx`)
+      </Step>
+
+      <Step title="Configure Environment Variables">
+        Add to your `.env` file:
+        
+        ```env
+        EMAIL_ADDRESS=your_email@icloud.com
+        EMAIL_PASSWORD=xxxx-xxxx-xxxx-xxxx
+        IMAP_SERVER=imap.mail.me.com
+        IMAP_PORT=993
+        ```
+      </Step>
+    </Steps>
+
+    ### iCloud IMAP Settings
+
+    | Setting | Value |
+    |---------|-------|
+    | IMAP Server | `imap.mail.me.com` |
+    | Port | `993` |
+    | Encryption | SSL/TLS |
+  </Tab>
+
+  <Tab title="Other Providers">
+    ### Other IMAP Providers
+
+    Most email providers support IMAP access. Here are some common configurations:
+
+    | Provider | IMAP Server | Port |
+    |----------|-------------|------|
+    | AOL | `imap.aol.com` | 993 |
+    | ProtonMail Bridge | `127.0.0.1` | 1143 |
+    | Fastmail | `imap.fastmail.com` | 993 |
+    | Zoho Mail | `imap.zoho.com` | 993 |
+
+    <Steps>
+      <Step title="Find Your Provider's IMAP Settings">
+        Check your email provider's documentation for:
+        - IMAP server address
+        - IMAP port (usually 993 for SSL)
+        - Whether app passwords are required
+      </Step>
+
+      <Step title="Enable IMAP Access">
+        Some providers require you to manually enable IMAP in settings:
+        1. Log in to your email account
+        2. Navigate to Settings
+        3. Look for "Forwarding and POP/IMAP" or similar
+        4. Enable IMAP access
+      </Step>
+
+      <Step title="Configure Environment Variables">
+        Add to your `.env` file:
+        
+        ```env
+        EMAIL_ADDRESS=your_email@provider.com
+        EMAIL_PASSWORD=your_password_or_app_password
+        IMAP_SERVER=imap.provider.com
+        IMAP_PORT=993
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Environment Configuration
+
+Your final `.env` file should look like this:
+
+```env
+# Discord Bot Configuration
+DISCORD_BOT_TOKEN=your_discord_bot_token_here
+
+# Email Configuration
+EMAIL_ADDRESS=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password_here
+IMAP_SERVER=imap.gmail.com
+IMAP_PORT=993
+```
+
+## Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use App Passwords" icon="key">
+    Always use app-specific passwords instead of your main email password. This limits access and can be revoked without changing your main password.
+  </Card>
+
+  <Card title="Enable 2FA" icon="shield-halved">
+    Two-factor authentication adds an extra layer of security to your email account and is required for app passwords on most providers.
+  </Card>
+
+  <Card title="Never Commit .env" icon="ban">
+    Add `.env` to your `.gitignore` file to prevent accidentally committing sensitive credentials to version control.
+  </Card>
+
+  <Card title="Read-Only Access" icon="eye">
+    The bot only reads emails and never modifies, deletes, or sends messages. Your inbox remains untouched.
+  </Card>
+</CardGroup>
+
+## Testing Your Configuration
+
+Once you've configured your email settings, you can test the connection by running the bot:
+
+```bash
+python otp_bot.py
+```
+
+If the configuration is correct, you should see:
+
+```
+✅ Logged in as OTP Bot
+🔍 Loading slash commands...
+✅ Slash commands synced!
+🎯 Bot is ready!
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="IMAP login failed">
+    **Possible causes:**
+    - Incorrect app password (regenerate and try again)
+    - IMAP not enabled in email settings
+    - Wrong IMAP server or port
+    - 2-Step Verification not enabled
+    
+    **Solutions:**
+    - Verify your `EMAIL_ADDRESS` and `EMAIL_PASSWORD` in `.env`
+    - Check that IMAP is enabled in your email provider's settings
+    - Confirm IMAP server and port match your provider's documentation
+    - Regenerate your app password
+  </Accordion>
+
+  <Accordion title="Connection timeout">
+    **Possible causes:**
+    - Firewall blocking IMAP port (993)
+    - Incorrect IMAP server address
+    - Network connectivity issues
+    
+    **Solutions:**
+    - Check your firewall settings to allow outbound connections on port 993
+    - Verify the IMAP server address is correct
+    - Test your internet connection
+  </Accordion>
+
+  <Accordion title="Authentication errors with app password">
+    **Possible causes:**
+    - App password contains spaces or formatting
+    - App password expired or revoked
+    - Using regular password instead of app password
+    
+    **Solutions:**
+    - Remove all spaces from the app password
+    - Generate a new app password
+    - Ensure you're using an app-specific password, not your regular email password
+  </Accordion>
+
+  <Accordion title="Missing environment variables error">
+    If you see:
+    ```
+    ❌ Missing environment variables: EMAIL_ADDRESS, EMAIL_PASSWORD, IMAP_SERVER
+    💡 Please check your .env file and make sure all variables are set.
+    ```
+    
+    **Solutions:**
+    - Verify `.env` file exists in the same directory as `otp_bot.py`
+    - Check that all required variables are defined:
+      - `EMAIL_ADDRESS`
+      - `EMAIL_PASSWORD`
+      - `IMAP_SERVER`
+      - `IMAP_PORT` (optional, defaults to 993)
+    - Ensure there are no typos in variable names
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+With both Discord and email configured, you're ready to:
+
+1. [Run the bot](/usage/running-the-bot) and test OTP retrieval
+2. Learn about [available commands](/usage/commands)
+3. Understand [how OTP detection works](/reference/otp-patterns)

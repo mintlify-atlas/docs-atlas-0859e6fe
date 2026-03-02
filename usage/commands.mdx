@@ -1,0 +1,149 @@
+---
+title: Command Reference
+description: Complete reference for all Discord OTP Bot slash commands
+---
+
+The Discord OTP Bot provides three slash commands to help you retrieve OTP codes and check bot status.
+
+## Available Commands
+
+### /otp
+
+Performs a comprehensive search for OTP codes with a 2-minute timeout window.
+
+<ParamField path="email" type="string" required>
+  The email address to check for OTP codes. Must be a valid email format.
+</ParamField>
+
+**How it works:**
+1. Searches existing emails in your inbox (1 minute)
+2. If no OTP found, waits for new incoming emails (1 minute)
+3. Returns the first OTP code detected
+
+**Usage Example:**
+```
+/otp email:john.doe@example.com
+```
+
+**Response Format:**
+
+<CodeGroup>
+```text Success - Existing OTP
+✅ OTP code found: `123456`
+```
+
+```text Success - New OTP
+⏳ No existing OTP found. Waiting for new email...
+✅ New OTP code received: `123456`
+```
+
+```text No OTP Found
+❌ No OTP code found.
+**Troubleshooting:**
+• Check if the service sent the email
+• Verify the email address is correct
+• Ensure emails are forwarded to your main inbox
+• Try again in a moment
+```
+
+```text Invalid Email
+❌ Please provide a valid email address.
+```
+</CodeGroup>
+
+<Note>
+  All OTP responses are sent as ephemeral messages (only visible to you) for security.
+</Note>
+
+---
+
+### /quick_otp
+
+Performs a faster search for OTP codes with a 1-minute timeout. Only searches existing emails without waiting for new ones.
+
+<ParamField path="email" type="string" required>
+  The email address to check for OTP codes. Must be a valid email format.
+</ParamField>
+
+**How it works:**
+- Searches only existing emails in your inbox
+- Times out after 1 minute
+- Does not wait for new incoming emails
+
+**Usage Example:**
+```
+/quick_otp email:jane.smith@example.com
+```
+
+**Response Format:**
+
+<CodeGroup>
+```text Success
+✅ OTP code found: `789012`
+```
+
+```text No OTP Found
+❌ No OTP code found within 1 minute.
+```
+
+```text Invalid Email
+❌ Please provide a valid email address.
+```
+</CodeGroup>
+
+<Tip>
+  Use `/quick_otp` when you've already received the OTP email and want faster results.
+</Tip>
+
+---
+
+### /ping
+
+Checks if the bot is online and responsive. Useful for testing bot connectivity.
+
+**No parameters required.**
+
+**Usage Example:**
+```
+/ping
+```
+
+**Response Format:**
+```text
+✅ Bot is online and responsive!
+```
+
+---
+
+## Supported OTP Formats
+
+The bot automatically detects OTP codes in various formats:
+
+| Format | Example |
+|--------|----------|
+| Instacart style | "147477 is your instacart verification code" |
+| Bolded codes | `**123456**` |
+| Standard format | "Your code is: 123456" |
+| OTP prefix | "OTP: 456789" |
+| Verification code | "verification code: 789012" |
+| Standalone digits | Any 4-8 digit number |
+
+<Info>
+  The bot uses intelligent pattern matching to detect OTP codes from different services including Instagram, Discord, Amazon, banking apps, and more.
+</Info>
+
+---
+
+## Command Comparison
+
+| Feature | /otp | /quick_otp | /ping |
+|---------|------|------------|-------|
+| **Search Duration** | 2 minutes total | 1 minute | Instant |
+| **Searches Existing** | Yes (1 min) | Yes (1 min) | N/A |
+| **Waits for New** | Yes (1 min) | No | N/A |
+| **Best For** | New OTP requests | Already received emails | Bot health check |
+| **Requires Email** | Yes | Yes | No |
+
+<Warning>
+  Make sure to provide the exact email address that will receive the OTP. The bot searches for emails sent TO this address, not FROM it.
+</Warning>

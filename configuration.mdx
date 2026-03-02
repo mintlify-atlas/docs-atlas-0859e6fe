@@ -1,0 +1,269 @@
+---
+title: Configuration
+description: Configure environment variables and email settings for Discord OTP Bot
+---
+
+# Configuration
+
+Configure Discord OTP Bot with the right environment variables and email settings for optimal performance.
+
+## Environment Variables
+
+All configuration is managed through a `.env` file in the project root. This file contains sensitive credentials and should never be committed to version control.
+
+### Required Variables
+
+<ParamField path="DISCORD_BOT_TOKEN" type="string" required>
+  Your Discord bot token from the Discord Developer Portal.
+  
+  **How to get it:**
+  1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+  2. Select your application
+  3. Navigate to the **Bot** tab
+  4. Click **Reset Token** and copy the token
+  
+  **Example:** `MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.GhIjKl.MnOpQrStUvWxYzAbCdEfGhIjKlMnOpQrStUv`
+</ParamField>
+
+<ParamField path="EMAIL_ADDRESS" type="string" required>
+  The email address that will receive OTP codes. This is the inbox the bot will monitor.
+  
+  **Supported providers:** Gmail, Outlook, Yahoo, iCloud, AOL, and any IMAP-enabled email service.
+  
+  **Example:** `your_email@gmail.com`
+</ParamField>
+
+<ParamField path="EMAIL_PASSWORD" type="string" required>
+  An app-specific password for your email account. **Never use your actual email password.**
+  
+  **Security note:** App passwords are more secure because they:
+  - Can be revoked independently without changing your main password
+  - Have limited scope (email access only)
+  - Are designed for third-party applications
+  
+  **Example:** `abcd efgh ijkl mnop` (16 characters for Gmail)
+</ParamField>
+
+<ParamField path="IMAP_SERVER" type="string" required>
+  The IMAP server hostname for your email provider.
+  
+  See [Supported Email Providers](#supported-email-providers) below for common values.
+  
+  **Example:** `imap.gmail.com`
+</ParamField>
+
+<ParamField path="IMAP_PORT" type="number" default="993">
+  The IMAP server port. Standard IMAP over SSL/TLS uses port 993.
+  
+  **Default:** `993` (recommended for all providers)
+</ParamField>
+
+### Example Configuration
+
+```env .env
+DISCORD_BOT_TOKEN=MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.GhIjKl.MnOpQrStUvWxYzAbCdEfGhIjKlMnOpQrStUv
+EMAIL_ADDRESS=your_email@gmail.com
+EMAIL_PASSWORD=abcd efgh ijkl mnop
+IMAP_SERVER=imap.gmail.com
+IMAP_PORT=993
+```
+
+## Supported Email Providers
+
+The bot works with any IMAP-enabled email service. Here are the most common providers:
+
+| Provider | IMAP Server | Port | App Password Setup |
+|----------|-------------|------|-------------------|
+| **Gmail** | `imap.gmail.com` | 993 | [Google App Passwords](https://myaccount.google.com/apppasswords) |
+| **Outlook** | `imap-mail.outlook.com` | 993 | [Microsoft App Passwords](https://account.microsoft.com/security) |
+| **Yahoo** | `imap.mail.yahoo.com` | 993 | [Yahoo App Passwords](https://login.yahoo.com/account/security) |
+| **iCloud** | `imap.mail.me.com` | 993 | [iCloud App Passwords](https://appleid.apple.com/account/manage) |
+| **AOL** | `imap.aol.com` | 993 | [AOL App Passwords](https://login.aol.com/account/security) |
+
+### Gmail Setup
+
+<Steps>
+  <Step title="Enable 2-Step Verification">
+    Visit [Google Account Security](https://myaccount.google.com/security) and enable 2-Step Verification if not already enabled.
+  </Step>
+  
+  <Step title="Generate App Password">
+    1. Go to [App Passwords](https://myaccount.google.com/apppasswords)
+    2. Select **Mail** as the app
+    3. Select **Other** as the device and name it "Discord OTP Bot"
+    4. Click **Generate**
+    5. Copy the 16-character password (without spaces)
+  </Step>
+  
+  <Step title="Update .env File">
+    ```env
+    EMAIL_ADDRESS=your_email@gmail.com
+    EMAIL_PASSWORD=abcdefghijklmnop
+    IMAP_SERVER=imap.gmail.com
+    IMAP_PORT=993
+    ```
+  </Step>
+</Steps>
+
+### Outlook/Hotmail Setup
+
+<Steps>
+  <Step title="Enable IMAP">
+    1. Sign in to [Outlook.com](https://outlook.com)
+    2. Go to **Settings** > **View all Outlook settings**
+    3. Navigate to **Mail** > **Sync email**
+    4. Ensure **IMAP** is enabled
+  </Step>
+  
+  <Step title="Generate App Password">
+    1. Visit [Microsoft Account Security](https://account.microsoft.com/security)
+    2. Under **Advanced security options**, find **App passwords**
+    3. Create a new app password
+    4. Copy the generated password
+  </Step>
+  
+  <Step title="Update .env File">
+    ```env
+    EMAIL_ADDRESS=your_email@outlook.com
+    EMAIL_PASSWORD=your_app_password
+    IMAP_SERVER=imap-mail.outlook.com
+    IMAP_PORT=993
+    ```
+  </Step>
+</Steps>
+
+## OTP Pattern Matching
+
+The bot uses intelligent regex patterns to extract OTP codes from various email formats:
+
+### Supported Formats
+
+- **Service-specific format:** "147477 is your instacart verification code"
+- **Bolded codes:** `**123456**`
+- **Code with label:** "Your code is: 123456"
+- **OTP prefix:** "OTP: 123456"
+- **Verification code:** "Verification code: 123456"
+- **Standalone codes:** Any 4-8 digit number
+
+### Pattern Priority
+
+The bot searches email subjects and body text using these patterns in order:
+
+1. "[digits] is your [service] verification code"
+2. Bold formatted codes (Markdown style)
+3. Standalone 4-8 digit codes surrounded by whitespace
+4. Common OTP phrases ("code:", "verification code:", "OTP:")
+5. Fallback: any 4-8 digit number
+
+<Note>
+  The bot searches both email **subject** and **body text** to maximize the chance of finding OTP codes.
+</Note>
+
+## Security Best Practices
+
+<Warning>
+  **Never commit your `.env` file to version control.** Ensure `.env` is listed in your `.gitignore` file.
+</Warning>
+
+### Recommended Security Measures
+
+1. **Use App Passwords Only**
+   - Never use your actual email password
+   - App passwords can be revoked without changing your main password
+   - Each app password has limited scope
+
+2. **Enable 2-Factor Authentication**
+   - Required for generating app passwords on most services
+   - Adds an extra layer of security to your email account
+
+3. **Rotate Credentials Regularly**
+   - Regenerate app passwords periodically
+   - Reset Discord bot token if compromised
+
+4. **Use Dedicated Email Forwarding**
+   - Consider creating email forwarding rules to a dedicated inbox
+   - Limits the bot's access to only OTP emails
+
+5. **Monitor Access Logs**
+   - Check your email provider's activity logs regularly
+   - Look for unexpected IMAP connections
+
+### Privacy Features
+
+The bot is designed with privacy in mind:
+
+- **Read-only access:** Never modifies or deletes emails
+- **Ephemeral messages:** All Discord responses are only visible to you
+- **No data storage:** OTP codes are never logged or saved
+- **No telemetry:** The bot doesn't send usage data anywhere
+
+## Validation and Error Handling
+
+The bot validates configuration on startup (otp_bot.py:252-259):
+
+```python
+required_vars = ['DISCORD_BOT_TOKEN', 'EMAIL_ADDRESS', 'EMAIL_PASSWORD', 'IMAP_SERVER']
+missing_vars = [var for var in required_vars if not os.getenv(var)]
+
+if missing_vars:
+    print(f"❌ Missing environment variables: {', '.join(missing_vars)}")
+    print("💡 Please check your .env file and make sure all variables are set.")
+    exit(1)
+```
+
+If any required variables are missing, the bot will:
+1. Display which variables are missing
+2. Provide a helpful message
+3. Exit gracefully without starting
+
+## Configuration Summary
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `DISCORD_BOT_TOKEN` | Yes | - | Discord bot authentication token |
+| `EMAIL_ADDRESS` | Yes | - | Email address to monitor for OTPs |
+| `EMAIL_PASSWORD` | Yes | - | App-specific password (not your actual password) |
+| `IMAP_SERVER` | Yes | - | IMAP server hostname |
+| `IMAP_PORT` | No | 993 | IMAP server port (SSL/TLS) |
+
+## Troubleshooting
+
+### IMAP Connection Errors
+
+**Error:** `❌ Error searching emails: [AUTHENTICATIONFAILED]`
+
+**Solutions:**
+- Verify your app password is correct (no spaces)
+- Ensure IMAP is enabled in your email settings
+- Regenerate your app password
+- Check that 2-Step Verification is enabled
+
+### Missing Environment Variables
+
+**Error:** `❌ Missing environment variables: EMAIL_ADDRESS, EMAIL_PASSWORD`
+
+**Solutions:**
+- Ensure `.env` file exists in the project root
+- Verify all required variables are set
+- Check for typos in variable names
+- Ensure no extra spaces around `=` signs
+
+### Bot Token Invalid
+
+**Error:** `discord.errors.LoginFailure: Improper token has been passed.`
+
+**Solutions:**
+- Reset your bot token in the Discord Developer Portal
+- Copy the entire token without extra spaces
+- Ensure the token hasn't been regenerated since you copied it
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Usage Guide" icon="book" href="/usage/commands">
+    Learn how to use the bot's commands
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/reference/troubleshooting">
+    Common issues and solutions
+  </Card>
+</CardGroup>

@@ -1,0 +1,254 @@
+---
+title: Running the Bot
+description: How to start, monitor, and troubleshoot the Discord OTP Bot
+---
+
+This guide covers how to run the Discord OTP Bot after you've completed the installation and configuration steps.
+
+## Prerequisites
+
+Before running the bot, ensure you have:
+
+<Check>Installed all dependencies from `requirements.txt`</Check>
+<Check>Configured your `.env` file with all required variables</Check>
+<Check>Created and invited your Discord bot to your server</Check>
+<Check>Enabled IMAP access on your email account</Check>
+
+---
+
+## Starting the Bot
+
+Navigate to your bot directory and run:
+
+```bash
+python otp_bot.py
+```
+
+<Note>
+  Make sure you're in the same directory as `otp_bot.py` and your `.env` file when running this command.
+</Note>
+
+---
+
+## Expected Console Output
+
+When the bot starts successfully, you should see the following output:
+
+```text
+🚀 Starting OTP Bot...
+✅ Logged in as OTP Bot (ID: 1234567890123456789)
+🔍 Loading slash commands...
+✅ Slash commands synced!
+🎯 Bot is ready! Use /otp or /quick_otp to get started.
+```
+
+### Output Breakdown
+
+| Line | What It Means |
+|------|---------------|
+| `🚀 Starting OTP Bot...` | Bot initialization has begun |
+| `✅ Logged in as...` | Successfully connected to Discord |
+| `🔍 Loading slash commands...` | Registering slash commands with Discord |
+| `✅ Slash commands synced!` | Commands are available for use |
+| `🎯 Bot is ready!` | Bot is fully operational |
+
+---
+
+## What Happens When Bot is Ready
+
+1. **Discord Connection**: The bot logs into Discord using your bot token
+2. **Command Registration**: All slash commands (`/otp`, `/quick_otp`, `/ping`) are registered
+3. **Command Sync**: Commands are synced globally with Discord (may take 1-2 hours for first-time setup)
+4. **Ready State**: The bot enters a listening state and waits for user commands
+
+<Info>
+  The first time you run the bot, slash commands can take up to 1-2 hours to appear globally. For instant availability during development, use guild-specific syncing.
+</Info>
+
+---
+
+## Using Commands
+
+Once the bot shows "Bot is ready!", you can use the slash commands:
+
+1. Open Discord
+2. Navigate to any channel where the bot is present, or DM the bot
+3. Type `/` and you'll see the available commands:
+   - `/otp`
+   - `/quick_otp`
+   - `/ping`
+
+<Tip>
+  Test with `/ping` first to verify the bot is responding correctly.
+</Tip>
+
+---
+
+## Monitoring Bot Activity
+
+While the bot is running, it logs activity to the console:
+
+```text Console Log Examples
+📧 Searching emails for: user@example.com
+🔑 OTP found with pattern: 123456
+✅ OTP found: 123456
+⏳ Waiting for new OTP email to: user@example.com
+✅ New OTP received: 456789
+```
+
+These logs help you understand:
+- Which email addresses are being searched
+- What OTP codes are being detected
+- Whether the bot is searching existing or waiting for new emails
+
+---
+
+## Stopping the Bot
+
+To stop the bot, use one of these methods:
+
+<CodeGroup>
+```bash Ctrl+C (Recommended)
+# Press Ctrl+C in the terminal where the bot is running
+```
+
+```bash Kill Process
+# Find the process ID
+ps aux | grep otp_bot.py
+
+# Kill the process
+kill <PID>
+```
+</CodeGroup>
+
+<Warning>
+  Always stop the bot gracefully using Ctrl+C when possible. This ensures proper cleanup and logout from Discord.
+</Warning>
+
+---
+
+## Basic Troubleshooting
+
+### Missing Environment Variables
+
+**Error:**
+```text
+❌ Missing environment variables: DISCORD_BOT_TOKEN, EMAIL_PASSWORD
+💡 Please check your .env file and make sure all variables are set.
+```
+
+**Solution:**
+1. Open your `.env` file
+2. Verify all required variables are present:
+   - `DISCORD_BOT_TOKEN`
+   - `EMAIL_ADDRESS`
+   - `EMAIL_PASSWORD`
+   - `IMAP_SERVER`
+3. Ensure there are no typos or extra spaces
+4. Restart the bot
+
+---
+
+### IMAP Login Failure
+
+**Error in console:**
+```text
+❌ Error searching emails: [AUTHENTICATIONFAILED]
+```
+
+**Solutions:**
+- Verify your email address and app password are correct
+- Ensure IMAP is enabled in your email settings
+- For Gmail: Make sure you're using an App Password, not your regular password
+- Check that 2-Step Verification is enabled (required for app passwords)
+- Regenerate your app password and update `.env`
+
+---
+
+### Commands Not Appearing
+
+**Issue:** Slash commands don't show up in Discord
+
+**Solutions:**
+1. **Wait for sync**: Global commands can take 1-2 hours to sync on first run
+2. **Check permissions**: Verify the bot has `applications.commands` scope
+3. **Reinvite bot**: Generate a new invite URL with correct scopes:
+   - `bot`
+   - `applications.commands`
+4. **Verify bot status**: Use `/ping` or check if bot shows as online
+
+---
+
+### Connection Timeout
+
+**Error:**
+```text
+Discord connection timeout
+```
+
+**Solutions:**
+- Check your internet connection
+- Verify your Discord bot token is valid
+- Ensure Discord services are operational (check status.discord.com)
+- Try regenerating your bot token in Discord Developer Portal
+
+---
+
+## Running in Production
+
+For continuous operation, consider using a process manager:
+
+<CodeGroup>
+```bash PM2
+# Install PM2
+npm install -g pm2
+
+# Start bot with PM2
+pm2 start otp_bot.py --interpreter python3 --name "discord-otp-bot"
+
+# Monitor
+pm2 logs discord-otp-bot
+
+# Auto-restart on system reboot
+pm2 startup
+pm2 save
+```
+
+```bash Screen
+# Create a new screen session
+screen -S otp-bot
+
+# Run the bot
+python otp_bot.py
+
+# Detach: Press Ctrl+A then D
+
+# Reattach later
+screen -r otp-bot
+```
+
+```bash Systemd Service
+# Create service file: /etc/systemd/system/otp-bot.service
+[Unit]
+Description=Discord OTP Bot
+After=network.target
+
+[Service]
+Type=simple
+User=yourusername
+WorkingDirectory=/path/to/discord-otp-bot
+ExecStart=/usr/bin/python3 /path/to/discord-otp-bot/otp_bot.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable and start
+sudo systemctl enable otp-bot
+sudo systemctl start otp-bot
+```
+</CodeGroup>
+
+<Info>
+  Using a process manager ensures your bot automatically restarts if it crashes or if your server reboots.
+</Info>

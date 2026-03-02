@@ -1,0 +1,309 @@
+---
+title: 'Contributing'
+description: 'How to contribute to Discord OTP Bot development'
+icon: 'code-pull-request'
+---
+
+## Welcome Contributors
+
+Thank you for your interest in contributing to Discord OTP Bot! We welcome contributions from the community to help improve the bot and add new features.
+
+<Note>
+  This project is open source and licensed under the **MIT License**, which means you're free to use, modify, and distribute the code as long as you include the original copyright notice.
+</Note>
+
+## How to Contribute
+
+Contributions can take many forms:
+
+<CardGroup cols={2}>
+  <Card title="Bug Fixes" icon="bug">
+    Found a bug? Submit an issue or fix it yourself with a pull request.
+  </Card>
+  <Card title="New Features" icon="sparkles">
+    Have an idea for a new feature? Propose it in an issue or implement it and submit a PR.
+  </Card>
+  <Card title="Documentation" icon="book">
+    Improve documentation, add examples, or fix typos to help other users.
+  </Card>
+  <Card title="Testing" icon="vial">
+    Test the bot with different email providers and report compatibility issues.
+  </Card>
+</CardGroup>
+
+## Contribution Workflow
+
+<Steps>
+  <Step title="Fork the Repository">
+    Start by forking the Discord OTP Bot repository to your GitHub account.
+    
+    ```bash
+    # Visit the repository
+    https://github.com/2577mamneet/discord-otp-bot
+    
+    # Click the "Fork" button in the top right
+    ```
+    
+    Then clone your fork locally:
+    
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/discord-otp-bot.git
+    cd discord-otp-bot
+    ```
+  </Step>
+  
+  <Step title="Create a Feature Branch">
+    Create a new branch for your changes. Use a descriptive name that reflects what you're working on.
+    
+    ```bash
+    git checkout -b feature/YourFeature
+    ```
+    
+    Branch naming conventions:
+    - `feature/` - for new features (e.g., `feature/add-yahoo-support`)
+    - `fix/` - for bug fixes (e.g., `fix/imap-timeout-error`)
+    - `docs/` - for documentation changes (e.g., `docs/update-readme`)
+    - `refactor/` - for code refactoring (e.g., `refactor/otp-extraction`)
+  </Step>
+  
+  <Step title="Make Your Changes">
+    Implement your feature or fix. Follow the existing code style and conventions.
+    
+    <Accordion title="Code Style Guidelines">
+      - Use Python 3.8+ syntax
+      - Follow PEP 8 style guidelines
+      - Add docstrings to functions and classes
+      - Include comments for complex logic
+      - Use meaningful variable names
+      - Keep functions focused on a single responsibility
+    </Accordion>
+    
+    <Accordion title="Testing Your Changes">
+      1. Set up your development environment:
+      
+      ```bash
+      # Install dependencies
+      pip install -r requirements.txt
+      
+      # Configure your .env file
+      cp .env.example .env
+      # Edit .env with your credentials
+      ```
+      
+      2. Test the bot thoroughly:
+      
+      ```bash
+      # Run the bot
+      python otp_bot.py
+      
+      # Test all slash commands
+      # - /otp
+      # - /quick_otp
+      # - /ping
+      ```
+      
+      3. Verify your changes work with different email providers (Gmail, Outlook, Yahoo, etc.)
+    </Accordion>
+  </Step>
+  
+  <Step title="Commit Your Changes">
+    Write clear, descriptive commit messages that explain what and why.
+    
+    ```bash
+    git add .
+    git commit -m "Add support for Yahoo Mail IMAP configuration"
+    ```
+    
+    Good commit message examples:
+    - ✅ "Fix OTP extraction regex for Instacart emails"
+    - ✅ "Add support for iCloud IMAP settings"
+    - ✅ "Improve error handling for IMAP connection failures"
+    - ❌ "Update code"
+    - ❌ "Fix bug"
+    - ❌ "Changes"
+  </Step>
+  
+  <Step title="Push to Your Fork">
+    Push your feature branch to your GitHub fork.
+    
+    ```bash
+    git push origin feature/YourFeature
+    ```
+    
+    If this is your first push of this branch, Git will provide the command to set up tracking:
+    
+    ```bash
+    git push -u origin feature/YourFeature
+    ```
+  </Step>
+  
+  <Step title="Submit a Pull Request">
+    Go to the [original repository](https://github.com/2577mamneet/discord-otp-bot) on GitHub and click "New Pull Request".
+    
+    <Warning>
+      Make sure your pull request:
+      - Has a clear title describing the change
+      - Includes a detailed description of what was changed and why
+      - References any related issues (e.g., "Fixes #123")
+      - Includes screenshots or examples if applicable
+      - Passes all existing tests and doesn't break functionality
+    </Warning>
+    
+    **Pull Request Template:**
+    
+    ```markdown
+    ## Description
+    Brief description of what this PR does
+    
+    ## Changes Made
+    - Change 1
+    - Change 2
+    - Change 3
+    
+    ## Testing
+    How did you test these changes?
+    
+    ## Related Issues
+    Fixes #[issue number]
+    
+    ## Screenshots (if applicable)
+    Add screenshots to help explain your changes
+    ```
+  </Step>
+</Steps>
+
+## Contribution Ideas
+
+Not sure what to work on? Here are some ideas:
+
+<AccordionGroup>
+  <Accordion title="Email Provider Support">
+    - Test and document additional IMAP providers
+    - Add provider-specific configuration examples
+    - Create troubleshooting guides for specific providers
+  </Accordion>
+  
+  <Accordion title="OTP Pattern Recognition">
+    - Improve regex patterns for better OTP detection
+    - Add support for alphanumeric OTP codes
+    - Handle additional OTP formats from popular services
+  </Accordion>
+  
+  <Accordion title="Feature Enhancements">
+    - Add command to list recent OTPs from multiple senders
+    - Implement filtering by sender email or domain
+    - Add support for configuring search timeout via command
+    - Create admin commands for bot management
+  </Accordion>
+  
+  <Accordion title="Error Handling & UX">
+    - Improve error messages for common issues
+    - Add better logging and debugging capabilities
+    - Implement retry logic for transient failures
+    - Add progress indicators for long-running searches
+  </Accordion>
+  
+  <Accordion title="Documentation">
+    - Add video tutorials or GIFs
+    - Create provider-specific setup guides
+    - Translate documentation to other languages
+    - Add more troubleshooting scenarios
+  </Accordion>
+</AccordionGroup>
+
+## Code Review Process
+
+After submitting your pull request:
+
+1. **Automated Checks**: Your PR may be checked by automated tools (if configured)
+2. **Code Review**: Project maintainers will review your code and may request changes
+3. **Discussion**: Be prepared to discuss your implementation and make revisions
+4. **Approval**: Once approved, your PR will be merged into the main branch
+
+<Tip>
+  Be patient and responsive during the review process. Maintainers may have questions or suggestions for improvement.
+</Tip>
+
+## Reporting Issues
+
+Found a bug or have a feature request? Please open an issue on GitHub.
+
+<CardGroup cols={2}>
+  <Card title="Bug Reports" icon="bug" href="https://github.com/2577mamneet/discord-otp-bot/issues">
+    Report bugs with detailed reproduction steps
+  </Card>
+  <Card title="Feature Requests" icon="lightbulb" href="https://github.com/2577mamneet/discord-otp-bot/issues">
+    Suggest new features or improvements
+  </Card>
+</CardGroup>
+
+### Bug Report Template
+
+When reporting bugs, please include:
+
+```markdown
+## Bug Description
+Clear description of the bug
+
+## Steps to Reproduce
+1. Step one
+2. Step two
+3. Step three
+
+## Expected Behavior
+What should happen
+
+## Actual Behavior
+What actually happens
+
+## Environment
+- Python version:
+- Discord.py version:
+- Email provider:
+- Operating system:
+
+## Error Messages
+Paste any error messages or logs
+
+## Additional Context
+Any other relevant information
+```
+
+## License
+
+<Note>
+  By contributing to Discord OTP Bot, you agree that your contributions will be licensed under the **MIT License**.
+</Note>
+
+The MIT License is a permissive license that allows:
+
+- ✅ Commercial use
+- ✅ Modification
+- ✅ Distribution
+- ✅ Private use
+
+As long as the license and copyright notice are included. See the full license text in the [LICENSE](https://github.com/2577mamneet/discord-otp-bot/blob/main/LICENSE) file.
+
+## Questions?
+
+If you have questions about contributing:
+
+1. Check existing [issues](https://github.com/2577mamneet/discord-otp-bot/issues) and [pull requests](https://github.com/2577mamneet/discord-otp-bot/pulls)
+2. Open a new issue with the "question" label
+3. Reach out to the project maintainers
+
+<Tip>
+  Star ⭐ the repository if you find it useful! It helps others discover the project and motivates contributors.
+</Tip>
+
+## Community Guidelines
+
+When participating in the Discord OTP Bot community:
+
+- Be respectful and inclusive
+- Provide constructive feedback
+- Help others when you can
+- Follow the project's code of conduct
+- Keep discussions focused and on-topic
+
+Thank you for contributing to Discord OTP Bot!

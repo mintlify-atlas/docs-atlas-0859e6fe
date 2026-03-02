@@ -1,0 +1,197 @@
+---
+title: 'Security'
+description: 'Security features, best practices, and privacy considerations for Discord OTP Bot'
+icon: 'shield-halved'
+---
+
+## Security Features
+
+Discord OTP Bot is designed with security and privacy as top priorities. The bot implements multiple layers of protection to ensure your sensitive data remains secure.
+
+### Core Security Features
+
+<CardGroup cols={2}>
+  <Card title="App Passwords" icon="key">
+    Uses secure app-specific passwords instead of your main email password, limiting access scope and preventing credential exposure.
+  </Card>
+  <Card title="Ephemeral Messages" icon="eye-slash">
+    All OTP codes are sent via ephemeral Discord DMs that only you can see and automatically disappear, preventing others from viewing sensitive codes.
+  </Card>
+  <Card title="Read-Only Access" icon="book-open">
+    The bot operates in read-only mode and never modifies, deletes, or moves your emails. It only reads email content to extract OTP codes.
+  </Card>
+  <Card title="No Data Storage" icon="database">
+    No OTP codes, email content, or sensitive information is saved, logged, or stored anywhere. All data is processed in memory only.
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Warning>
+  **Only use this bot with email accounts you own.** Never use someone else's email credentials or access OTPs for accounts you don't have permission to access.
+</Warning>
+
+### Email Security
+
+<Steps>
+  <Step title="Enable Two-Factor Authentication">
+    Always enable 2-Step Verification on your email account before generating app passwords. This adds an essential security layer.
+  </Step>
+  
+  <Step title="Use App-Specific Passwords">
+    Generate dedicated app passwords for the bot instead of using your main email password. This allows you to revoke access without changing your primary credentials.
+    
+    For Gmail:
+    1. Go to Google Account settings
+    2. Navigate to Security > 2-Step Verification
+    3. Scroll to App Passwords
+    4. Generate a new password for "Mail"
+    5. Use this password in your `.env` file
+  </Step>
+  
+  <Step title="Secure Your .env File">
+    Never commit your `.env` file to version control. Ensure it's included in your `.gitignore` file and stored securely on your server.
+    
+    ```bash
+    # .gitignore
+    .env
+    .env.local
+    .env.*.local
+    ```
+  </Step>
+  
+  <Step title="Rotate Credentials Regularly">
+    Periodically regenerate your app passwords and Discord bot tokens. If you suspect any compromise, rotate credentials immediately.
+  </Step>
+</Steps>
+
+### Discord Bot Security
+
+<Note>
+  Configure your Discord bot with minimal required permissions to follow the principle of least privilege.
+</Note>
+
+**Required Permissions:**
+- View Channels
+- Send Messages
+- Read Message History
+- Use Slash Commands
+
+**Required Intents:**
+- Message Content Intent (for command processing)
+
+<Warning>
+  Do not grant additional permissions beyond what's required. Avoid administrator privileges or unnecessary channel access.
+</Warning>
+
+### Server Deployment
+
+When hosting the bot:
+
+1. **Use Secure Hosting**: Deploy on trusted infrastructure with proper security measures
+2. **Limit Access**: Restrict server access to only necessary personnel
+3. **Monitor Logs**: Regularly review bot logs for suspicious activity
+4. **Update Dependencies**: Keep Python packages up to date with security patches
+
+```bash
+# Check for outdated packages
+pip list --outdated
+
+# Update specific package
+pip install --upgrade discord.py
+```
+
+## Privacy Considerations
+
+### Data Handling
+
+The Discord OTP Bot follows strict privacy principles:
+
+<AccordionGroup>
+  <Accordion title="What Data is Accessed">
+    - Email subject lines and body content (to extract OTP codes)
+    - Recent emails sent to the specified email address
+    - Only emails from the last 2 minutes during OTP searches
+  </Accordion>
+  
+  <Accordion title="What Data is NOT Stored">
+    - OTP codes are never logged or saved
+    - Email content is not persisted to disk
+    - No user data is stored in databases
+    - Discord user IDs are not recorded
+    - Email credentials are only stored in your local `.env` file
+  </Accordion>
+  
+  <Accordion title="How Data is Processed">
+    1. Bot connects to your email via IMAP in read-only mode
+    2. Searches recent emails for OTP patterns using regex
+    3. Extracts OTP code from email content
+    4. Sends code via ephemeral Discord message
+    5. All data is cleared from memory after processing
+  </Accordion>
+</AccordionGroup>
+
+### IMAP Access
+
+<Note>
+  The bot uses IMAP protocol over SSL/TLS (port 993) for secure email access. All communication between the bot and your email provider is encrypted.
+</Note>
+
+**IMAP Permissions:**
+- **Read**: Yes (required to fetch emails)
+- **Write**: No
+- **Delete**: No
+- **Move**: No
+
+The bot operates with minimal IMAP permissions and cannot modify your mailbox in any way.
+
+### Compliance
+
+<Warning>
+  Be aware of your organization's policies regarding third-party email access and bot usage. Some corporate email accounts may prohibit IMAP access or require additional security approvals.
+</Warning>
+
+**Recommendations:**
+- Use personal email accounts rather than corporate accounts
+- Review your email provider's terms of service regarding automation
+- Ensure compliance with applicable data protection regulations (GDPR, CCPA, etc.)
+- Consider using a dedicated email address for OTP codes
+
+## Incident Response
+
+If you suspect a security issue:
+
+<Steps>
+  <Step title="Revoke Access Immediately">
+    1. Revoke the app password used by the bot
+    2. Reset your Discord bot token
+    3. Stop the bot process
+  </Step>
+  
+  <Step title="Review Access Logs">
+    Check your email account's recent activity and Discord audit logs for unauthorized access.
+  </Step>
+  
+  <Step title="Update Credentials">
+    Generate new app passwords and bot tokens before restarting the service.
+  </Step>
+  
+  <Step title="Report Issues">
+    If you discover a security vulnerability in the bot code, please report it on the [GitHub repository](https://github.com/2577mamneet/discord-otp-bot/issues).
+  </Step>
+</Steps>
+
+## Additional Security Tips
+
+<Tip>
+  Consider using a separate email address specifically for receiving OTP codes. This limits exposure if credentials are compromised.
+</Tip>
+
+1. **Firewall Configuration**: Ensure your server allows outbound connections on port 993 (IMAP SSL)
+2. **Environment Isolation**: Run the bot in a containerized environment (Docker) for additional isolation
+3. **Log Management**: While the bot doesn't log sensitive data, ensure any custom logging you add follows security best practices
+4. **Access Control**: Limit who can invoke bot commands using Discord role permissions
+
+<Note>
+  The bot sends all responses as ephemeral messages, meaning only the user who invoked the command can see the OTP code. Other server members cannot view these messages.
+</Note>
